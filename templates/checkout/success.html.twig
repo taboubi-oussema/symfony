@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Confirmation - Tunisia Mall{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-success text-center" role="alert">
+                    <h4 class="alert-heading">Order Successful!</h4>
+                    <p>Your order has been placed successfully. Thank you for shopping with us!</p>
+                    <hr>
+                    <a href="{{ path('app_home') }}" class="btn btn-success">Go to Home Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

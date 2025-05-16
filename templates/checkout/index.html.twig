@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout - Tunisia Mall{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <h1 class="mb-4">Checkout</h1>
+
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-md-8">
+                <form action="{{ path('app_checkout_success', {id: someId}) }}" method="POST">
+
+                    <!-- Shipping Information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Shipping Information</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="firstName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="postalCode" class="form-label">Postal Code</label>
+                                    <input type="text" class="form-control" id="postalCode" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Method -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Shipping Method</h5>
+                            {% for method in shippingMethods %}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="shippingMethod" id="shipping{{ method.id }}" value="{{ method.id }}" {% if loop.first %}checked{% endif %}>
+                                    <label class="form-check-label" for="shipping{{ method.id }}">
+                                        {{ method.name }} - ${{ method.price|number_format(2) }}
+                                        <small class="text-muted d-block">Estimated delivery: {{ method.estimatedDays }} days</small>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Payment Method</h5>
+                            {% for method in paymentMethods %}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="payment{{ method.id }}" value="{{ method.id }}" {% if loop.first %}checked{% endif %}>
+                                    <label class="form-check-label" for="payment{{ method.id }}">
+                                        <i class="fab fa-{{ method.icon }} me-2"></i> {{ method.name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Place Order</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        {% for item in orderSummary.items %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>{{ item.name }} x {{ item.quantity }}</span>
+                                <span>${{ (item.price * item.quantity)|number_format(2) }}</span>
+                            </div>
+                        {% endfor %}
+                        <hr>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>${{ orderSummary.subtotal|number_format(2) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span>${{ orderSummary.shipping|number_format(2) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax</span>
+                            <span>${{ orderSummary.tax|number_format(2) }}</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="h5 mb-0">Total</span>
+                            <span class="h5 mb-0">${{ orderSummary.total|number_format(2) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
