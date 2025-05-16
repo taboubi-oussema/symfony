@@ -23,6 +23,12 @@ class Produit
     #[ORM\Column]
     private ?float $prix = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $disponible = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $idBoutique = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +66,30 @@ class Produit
     public function setPrix(float $prix): static
     {
         $this->prix = $prix;
+
+        return $this;
+    }
+
+    public function isDisponible(): ?bool
+    {
+        return $this->disponible;
+    }
+
+    public function setDisponible(?bool $disponible): static
+    {
+        $this->disponible = $disponible;
+
+        return $this;
+    }
+
+    public function getIdBoutique(): ?int
+    {
+        return $this->idBoutique;
+    }
+
+    public function setIdBoutique(?int $idBoutique): static
+    {
+        $this->idBoutique = $idBoutique;
 
         return $this;
     }

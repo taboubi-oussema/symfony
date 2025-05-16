@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\ProduitRepository;
 
 class CartController extends AbstractController
 {
@@ -17,7 +18,7 @@ class CartController extends AbstractController
         // Get the cart from database
         $panier = $panierRepository->findOneBy(['idClient' => 101]);
         $cartItems = [];
-        $rawProducts = []; 
+        $rawProducts = [];
 
         if ($panier) {
 
@@ -30,7 +31,7 @@ class CartController extends AbstractController
         }
 
         // Calculate totals
-       $subtotal = $panier ? $panier->getTotal() : 0.0;
+        $subtotal = $panier ? $panier->getTotal() : 0.0;
         $shipping = 15.00;
         $tax = $subtotal * 0.19;
         $total = $subtotal + $shipping + $tax;
@@ -46,31 +47,27 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/add/{id}', name: 'app_cart_add')]
-    public function add(int $id, PanierRepository $panierRepository, EntityManagerInterface $entityManager): Response
+    public function add(int $id, PanierRepository $panierRepository, EntityManagerInterface $entityManager, ProduitRepository $produitRepository,): Response
     {
         $panier = $panierRepository->findOneBy(['idClient' => 101]);
-
+        $product = $produitRepository->find($id);
         if (!$panier) {
             $panier = new Panier();
             $panier->setIdClient(101);
             $panier->setProduits([]);
             $panier->setTotal(0.0);
         }
-
-        // Static product data (replace with actual logic to fetch product details)
-        $staticProducts = [
-            1 => ['id' => 1, 'name' => 'Static Product 1', 'price' => 10.00],
-            2 => ['id' => 2, 'name' => 'Static Product 2', 'price' => 25.50],
-            // Add more static products as needed
-        ];
-
-
-        if (!isset($staticProducts[$id])) {
+        if (!$product) {
             $this->addFlash('error', 'Product not found');
             return $this->redirectToRoute('app_cart');
         }
 
-        $productToAdd = $staticProducts[$id];
+        $productToAdd = [
+            'id' => $product->getId(),
+            'name' => $product->getNom(),
+            'price' => $product->getPrix()
+        ];
+       
 
         // Add the product to the cart's products array
         $products = $panier->getProduits();
