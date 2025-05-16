@@ -16,9 +16,12 @@ class CartController extends AbstractController
     {
         // Get the cart from database
         $panier = $panierRepository->findOneBy(['idClient' => 101]);
-        if($panier){
+        $cartItems = [];
+        $rawProducts = []; 
+
+        if ($panier) {
+
             $rawProducts = $panier->getProduits();
-            $cartItems = [];
         }
 
         // Format each product to match the template's expected structure
@@ -27,9 +30,9 @@ class CartController extends AbstractController
         }
 
         // Calculate totals
-        $subtotal = $panier->getTotal();
+       $subtotal = $panier ? $panier->getTotal() : 0.0;
         $shipping = 15.00;
-        $tax = $subtotal * 0.19; 
+        $tax = $subtotal * 0.19;
         $total = $subtotal + $shipping + $tax;
 
         return $this->render('cart/index.html.twig', [
@@ -38,7 +41,7 @@ class CartController extends AbstractController
             'shipping' => $shipping,
             'tax' => $tax,
             'total' => $total,
-            "panier"=>$panier
+            "panier" => $panier
         ]);
     }
 
@@ -61,7 +64,7 @@ class CartController extends AbstractController
             // Add more static products as needed
         ];
 
-       
+
         if (!isset($staticProducts[$id])) {
             $this->addFlash('error', 'Product not found');
             return $this->redirectToRoute('app_cart');
@@ -97,11 +100,11 @@ class CartController extends AbstractController
     {
         // Get the current cart
         $panier = $panierRepository->findOneBy(['idClient' => 101]);
-    
+
         if ($panier) {
             // Get current products
             $products = $panier->getProduits();
-    
+
             // Remove the product with the given ID
             foreach ($products as $key => $product) {
                 if (isset($product['id']) && $product['id'] == $id) {
@@ -109,13 +112,13 @@ class CartController extends AbstractController
                     break;
                 }
             }
-    
+
             // Reindex array
             $products = array_values($products);
-    
+
             // Update the cart's product list
             $panier->setProduits($products);
-    
+
             // Recalculate total
             $total = 0;
             foreach ($products as $product) {
@@ -124,12 +127,11 @@ class CartController extends AbstractController
                 }
             }
             $panier->setTotal($total);
-    
+
             // Save changes
             $entityManager->flush();
         }
-    
+
         return $this->redirectToRoute('app_cart');
     }
-    
 }
